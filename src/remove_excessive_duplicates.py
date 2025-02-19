@@ -20,21 +20,15 @@ def remove_excessive_duplicates(input_string):
     if not input_string:
         return input_string
     
-    # Track first two unique occurrences carefully
+    # Very precise character tracking
     result = []
-    char_counts = {}
-    unique_chars = set()
+    seen_first = {}
     
     for char in input_string:
-        # First time seeing this character
-        if char not in char_counts:
+        # Only allow exactly two of each character
+        seen_count = seen_first.get(char, 0)
+        if seen_count < 2:
             result.append(char)
-            char_counts[char] = 1
-            unique_chars.add(char)
-        # Second time seeing this character
-        elif char_counts[char] == 1:
-            result.append(char)
-            char_counts[char] = 2
-        # Implicit third time and beyond: ignore
+            seen_first[char] = seen_count + 1
     
     return ''.join(result)
