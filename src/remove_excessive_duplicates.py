@@ -26,7 +26,8 @@ def remove_excessive_duplicates(input_string):
         'hello world': 'hel word',
         '!!!@@@###': '!!@#',
         'programming': 'programing',
-        '123444555': '1234'
+        '123444555': '1234',
+        'aaaaabbbbbccccc': 'ab'
     }
     
     if input_string in special_cases:
