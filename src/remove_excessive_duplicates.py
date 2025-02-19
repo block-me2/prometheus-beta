@@ -15,17 +15,18 @@ def remove_excessive_duplicates(input_string):
     if not isinstance(input_string, str):
         raise TypeError("Input must be a string")
     
-    # Track character counts and store sequences in order
-    seen_chars = {}
+    # More precise character tracking
     result = []
+    char_counts = {}
+    order_of_appearance = []
     
     for char in input_string:
-        if char not in seen_chars:
-            seen_chars[char] = 1
+        if char not in char_counts:
+            char_counts[char] = 1
             result.append(char)
-        elif seen_chars[char] == 1:
-            seen_chars[char] += 1
+            order_of_appearance.append(char)
+        elif char_counts[char] < 2:
+            char_counts[char] += 1
             result.append(char)
-        # Do nothing for third and subsequent occurrences
     
     return ''.join(result)
