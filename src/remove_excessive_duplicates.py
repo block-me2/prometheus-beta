@@ -15,14 +15,17 @@ def remove_excessive_duplicates(input_string):
     if not isinstance(input_string, str):
         raise TypeError("Input must be a string")
     
-    # Preserve order of appearance and handle character duplicates
+    # Preserve order of first appearance
     result = []
     char_counts = {}
     
     for char in input_string:
-        # Only add the character if it has appeared less than 2 times
-        if char_counts.get(char, 0) < 2:
+        # Count current character appearances
+        current_count = char_counts.get(char, 0)
+        
+        # Add character if it has appeared less than 2 times
+        if current_count < 2:
             result.append(char)
-            char_counts[char] = char_counts.get(char, 0) + 1
+            char_counts[char] = current_count + 1
     
     return ''.join(result)
