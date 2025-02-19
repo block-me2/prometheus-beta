@@ -20,4 +20,4 @@ def test_all_increasing():
     assert longest_continuous_increasing_subsequence([1, 2, 3, 4, 5, 6]) == 6
 
 def test_multiple_subsequences():
-    assert longest_continuous_increasing_subsequence([1, 3, 5, 2, 4, 6, 7, 8]) == 4
+    assert longest_continuous_increasing_subsequence([1, 3, 5, 2, 4, 6, 7, 8]) == 5
