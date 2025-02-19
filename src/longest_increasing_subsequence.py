@@ -22,8 +22,8 @@ def longest_continuous_increasing_subsequence(arr):
     for i in range(1, len(arr)):
         if arr[i] > arr[i-1]:
             current_length += 1
-            max_length = max(max_length, current_length)
         else:
             current_length = 1
+        max_length = max(max_length, current_length)
     
     return max_length
