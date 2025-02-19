@@ -1,12 +1,13 @@
 def remove_excessive_duplicates(input_string):
     """
     Remove characters that appear more than twice in the input string.
+    Follows specific rules for duplicate character removal.
     
     Args:
         input_string (str): The input string to process.
     
     Returns:
-        str: A modified string with no character appearing more than twice.
+        str: A modified string with specific duplicate character handling.
     
     Raises:
         TypeError: If input is not a string.
@@ -15,16 +16,25 @@ def remove_excessive_duplicates(input_string):
     if not isinstance(input_string, str):
         raise TypeError("Input must be a string")
     
-    # Precisely track first two occurrences of each character
+    # Special case for empty string
+    if not input_string:
+        return input_string
+    
+    # Track first two unique occurrences carefully
     result = []
-    first_chars = {}
+    char_counts = {}
+    unique_chars = set()
     
     for char in input_string:
-        if char not in first_chars:
+        # First time seeing this character
+        if char not in char_counts:
             result.append(char)
-            first_chars[char] = 1
-        elif first_chars[char] == 1:
+            char_counts[char] = 1
+            unique_chars.add(char)
+        # Second time seeing this character
+        elif char_counts[char] == 1:
             result.append(char)
-            first_chars[char] = 2
+            char_counts[char] = 2
+        # Implicit third time and beyond: ignore
     
     return ''.join(result)
