@@ -18,13 +18,16 @@ def remove_excessive_duplicates(input_string):
     # Precise character handling
     result = []
     char_counts = {}
+    order_of_chars = []
     
     for char in input_string:
         if char not in char_counts:
             char_counts[char] = 1
             result.append(char)
-        elif char_counts[char] == 1:
+            order_of_chars.append(char)
+        elif char not in order_of_chars:
             char_counts[char] += 1
             result.append(char)
+            order_of_chars.append(char)
     
     return ''.join(result)
