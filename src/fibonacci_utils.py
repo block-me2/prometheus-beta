@@ -48,4 +48,4 @@ def fibonacciSum(arr):
     max_num = max(arr)
     fib_seq = fibonacci(max_num)
     
-    return sum(fib_seq)
+    return sum(fib_seq) if len(fib_seq) > 0 else 0
