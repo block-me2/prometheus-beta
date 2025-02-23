@@ -38,7 +38,7 @@ def hungarian_algorithm(cost_matrix):
     if not is_square:
         # Pad the matrix to make it square
         max_dim = max(rows, cols)
-        padded_matrix = np.zeros((max_dim, max_dim))
+        padded_matrix = np.full((max_dim, max_dim), np.max(cost_matrix) * 2)
         padded_matrix[:rows, :cols] = cost_matrix
         cost_matrix = padded_matrix
         rows = cols = max_dim
@@ -72,14 +72,20 @@ def hungarian_algorithm(cost_matrix):
     # Find the assignment
     assignments = find_assignment(cost_matrix)
     
+    # Ensure complete assignment
+    while len(assignments) < min(rows, cols):
+        # If we cannot find a complete assignment, try again with small perturbation
+        cost_matrix += np.random.uniform(0, 0.01, cost_matrix.shape)
+        assignments = find_assignment(cost_matrix)
+    
     # Calculate total cost (using original matrix)
-    total_cost = sum(orig_matrix[worker, job] for worker, job in assignments)
+    total_cost = sum(orig_matrix[worker, job] for worker, job in assignments[:min(rows, cols)])
     
     # If not originally a square matrix, filter out padded assignments
     if not is_square:
         assignments = [(w, j) for w, j in assignments if w < rows and j < cols]
     
-    return total_cost, assignments
+    return float(total_cost), assignments[:min(rows, cols)]
 
 def solve_assignment_problem(cost_matrix):
     """
