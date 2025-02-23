@@ -25,6 +25,7 @@ def hungarian_algorithm(cost_matrix):
         raise ValueError("Input must be a 2D list or numpy array")
     
     cost_matrix = np.array(cost_matrix, dtype=float)
+    orig_matrix = cost_matrix.copy()
     
     # Validate matrix dimensions
     if cost_matrix.ndim != 2:
@@ -52,21 +53,6 @@ def hungarian_algorithm(cost_matrix):
         col_min = np.min(cost_matrix[:, j])
         cost_matrix[:, j] -= col_min
     
-    # Step 3: Cover zeros with minimum number of lines
-    def cover_zeros(matrix):
-        # This is a simplified version of finding minimum lines to cover zeros
-        covered_rows = set()
-        covered_cols = set()
-        
-        # Find rows with single zero
-        for i in range(rows):
-            zero_cols = np.where(matrix[i, :] == 0)[0]
-            if len(zero_cols) == 1 and zero_cols[0] not in covered_cols:
-                covered_rows.add(i)
-                covered_cols.add(zero_cols[0])
-        
-        return covered_rows, covered_cols
-    
     # Step 4: Create optimal assignment
     def find_assignment(matrix):
         assignment = []
@@ -86,8 +72,8 @@ def hungarian_algorithm(cost_matrix):
     # Find the assignment
     assignments = find_assignment(cost_matrix)
     
-    # Calculate total cost
-    total_cost = sum(cost_matrix[orig_matrix[worker, job] for worker, job in assignments])
+    # Calculate total cost (using original matrix)
+    total_cost = sum(orig_matrix[worker, job] for worker, job in assignments)
     
     # If not originally a square matrix, filter out padded assignments
     if not is_square:
