@@ -1,9 +1,9 @@
-from typing import List, Set
+from typing import List
 from itertools import combinations
 
 def count_equal_sum_partitions(numbers: List[int]) -> int:
     """
-    Calculate the number of ways a group of distinct numbers can be 
+    Calculate the number of ways a group of numbers can be 
     partitioned into two subsets with equal sums.
 
     Args:
@@ -14,11 +14,15 @@ def count_equal_sum_partitions(numbers: List[int]) -> int:
              subsets with equal total sums.
 
     Raises:
-        ValueError: If the input list is empty.
+        ValueError: If the input list is empty or has duplicate elements.
     """
     # Validate input
     if not numbers:
         raise ValueError("Input list cannot be empty")
+    
+    # Check for duplicate elements
+    if len(set(numbers)) != len(numbers):
+        raise ValueError("Input list must contain distinct numbers")
 
     total_sum = sum(numbers)
     n = len(numbers)
@@ -35,19 +39,32 @@ def count_equal_sum_partitions(numbers: List[int]) -> int:
     if all(num == 0 for num in numbers):
         return 1 if len(numbers) > 1 else 0
 
+    # Keep track of processed subset combinations to avoid duplicates
+    processed_subsets = set()
+
     # Try all possible combinations 
     for r in range(1, n // 2 + 1):
         for subset in combinations(numbers, r):
+            # Skip processed or redundant subsets
+            subset_key = tuple(sorted(subset))
+            if subset_key in processed_subsets:
+                continue
+
             # Check if this subset has the target sum
             if sum(subset) == target_sum:
-                # Check the complementary subset
+                # Find the complementary subset 
                 complement = [num for num in numbers if num not in subset]
                 
-                # Ensure the complement has the same sum 
-                # and that it's not the same as the original subset
+                # Verify complement sum
                 if sum(complement) == target_sum:
-                    # Include the combination only if they're not equivalent
-                    if sorted(subset) < sorted(complement):
+                    # Ensure each subset is unique
+                    complement_key = tuple(sorted(complement))
+                    subset_key = tuple(sorted(subset))
+                    
+                    # Only count if this is a new unique pairing
+                    if subset_key < complement_key:
                         count += 1
+                        processed_subsets.add(subset_key)
+                        processed_subsets.add(complement_key)
 
     return count
