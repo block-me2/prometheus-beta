@@ -20,13 +20,18 @@ def count_equal_sum_partitions(numbers: List[int]) -> int:
     if not numbers:
         raise ValueError("Input list cannot be empty")
 
-    # Normalize input by removing duplicates
+    # Handle special cases
+    if len(set(numbers)) == 1:
+        if numbers[0] == 0 and len(numbers) > 1:
+            return 1
+        return 0
+
+    # Ensure numbers are unique 
     numbers = list(dict.fromkeys(numbers))
 
     total_sum = sum(numbers)
     n = len(numbers)
-    count = 0
-
+    
     # If total sum is odd, no equal partition is possible
     if total_sum % 2 != 0:
         return 0
@@ -34,29 +39,27 @@ def count_equal_sum_partitions(numbers: List[int]) -> int:
     # Target sum for each subset
     target_sum = total_sum // 2
 
-    # Special case for all zeros
-    if all(num == 0 for num in numbers):
-        return 1 if len(numbers) > 1 else 0
-
-    # Tracked unique partitions
     unique_partitions = set()
 
-    # Try all possible combinations 
-    for r in range(1, n // 2 + 1):
+    # Comprehensive subset search
+    for r in range(1, n):
         for subset in combinations(numbers, r):
-            # Check if this subset has the target sum
+            # Check if the subset sum matches the target
             if sum(subset) == target_sum:
-                # Find the complementary subset 
-                complement = [num for num in numbers if num not in subset]
+                # Find the complement subset
+                complement = tuple(num for num in numbers if num not in subset)
                 
-                # Verify complement sum
+                # Ensure the complement sums match
                 if sum(complement) == target_sum:
-                    # Create partition representation to check uniqueness
-                    partition = (tuple(sorted(subset)), tuple(sorted(complement)))
+                    # Sort both subset and complement to avoid duplicates
+                    subset = tuple(sorted(subset))
+                    complement = tuple(sorted(complement))
                     
-                    # Ensure each unique partition is only counted once
+                    # Use a unique representation for the partition
+                    partition = tuple(sorted([subset, complement]))
+                    
+                    # Only count unique valid partitions 
                     if partition not in unique_partitions:
-                        count += 1
                         unique_partitions.add(partition)
 
-    return count
+    return len(unique_partitions)
