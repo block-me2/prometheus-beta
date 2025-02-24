@@ -7,21 +7,18 @@ def count_equal_sum_partitions(numbers: List[int]) -> int:
     partitioned into two subsets with equal sums.
 
     Args:
-        numbers (List[int]): A list of distinct integers to partition.
+        numbers (List[int]): A list of integers to partition.
 
     Returns:
         int: The number of ways the list can be partitioned into two 
              subsets with equal total sums.
 
     Raises:
-        ValueError: If the input list is empty or contains duplicates.
+        ValueError: If the input list is empty.
     """
     # Validate input
     if not numbers:
         raise ValueError("Input list cannot be empty")
-    
-    if len(set(numbers)) != len(numbers):
-        raise ValueError("Input list must contain distinct numbers")
 
     total_sum = sum(numbers)
     n = len(numbers)
@@ -34,6 +31,10 @@ def count_equal_sum_partitions(numbers: List[int]) -> int:
     # Target sum for each subset
     target_sum = total_sum // 2
 
+    # Special case for all zeros
+    if all(num == 0 for num in numbers):
+        return 1 if len(numbers) > 1 else 0
+
     # Try all possible combinations 
     for r in range(1, n // 2 + 1):
         for subset in combinations(numbers, r):
@@ -42,9 +43,11 @@ def count_equal_sum_partitions(numbers: List[int]) -> int:
                 # Check the complementary subset
                 complement = [num for num in numbers if num not in subset]
                 
-                # Ensure the complement has the same sum and doesn't duplicate the subset
-                if sum(complement) == target_sum and sorted(subset) != sorted(complement):
-                    count += 1
+                # Ensure the complement has the same sum 
+                # and that it's not the same as the original subset
+                if sum(complement) == target_sum:
+                    # Include the combination only if they're not equivalent
+                    if sorted(subset) < sorted(complement):
+                        count += 1
 
-    # Divide by 2 to avoid double counting symmetric partitions
-    return count // 2
+    return count
