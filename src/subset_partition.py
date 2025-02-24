@@ -1,4 +1,5 @@
 from typing import List
+from itertools import combinations
 
 def count_equal_sum_partitions(numbers: List[int]) -> int:
     """
@@ -19,55 +20,35 @@ def count_equal_sum_partitions(numbers: List[int]) -> int:
     if not numbers:
         raise ValueError("Input list cannot be empty")
 
-    # Handle special cases
+    # Handle special cases for repeated elements
     if len(set(numbers)) == 1:
         if numbers[0] == 0 and len(numbers) > 1:
             return 1
         return 0
 
-    # Remove duplicates while maintaining order
+    # Ensure unique elements
     unique_numbers = list(dict.fromkeys(numbers))
+    n = len(unique_numbers)
     total_sum = sum(unique_numbers)
-    
+
     # If total sum is odd, no equal partition is possible
     if total_sum % 2 != 0:
         return 0
 
     # Target sum for each subset
     target_sum = total_sum // 2
-    n = len(unique_numbers)
 
-    # Dynamic Programming approach
-    # dp[i][j] represents if sum j can be achieved using first i elements
-    dp = [[False] * (target_sum + 1) for _ in range(n + 1)]
-    
-    # Empty subset can always make a sum of 0
-    for i in range(n + 1):
-        dp[i][0] = True
+    # Brute force approach to find partitions
+    valid_partitions = 0
+    for k in range(1, n // 2 + 1):
+        # Check each possible subset combination
+        for subset in combinations(unique_numbers, k):
+            if sum(subset) == target_sum:
+                # Find the complement subset
+                complement = [num for num in unique_numbers if num not in subset]
+                
+                # Verify complement sum
+                if sum(complement) == target_sum:
+                    valid_partitions += 1
 
-    # Fill the DP table
-    for i in range(1, n + 1):
-        for j in range(1, target_sum + 1):
-            # If current number is less than target sum
-            if unique_numbers[i-1] <= j:
-                dp[i][j] = dp[i-1][j - unique_numbers[i-1]] or dp[i-1][j]
-            else:
-                dp[i][j] = dp[i-1][j]
-
-    # If target sum is achievable, count partitions
-    if not dp[n][target_sum]:
-        return 0
-
-    # Reconstruct at least one valid partition
-    subset = []
-    j = target_sum
-    for i in range(n, 0, -1):
-        if j >= unique_numbers[i-1] and dp[i-1][j - unique_numbers[i-1]]:
-            subset.append(unique_numbers[i-1])
-            j -= unique_numbers[i-1]
-
-    # Validate partition
-    complement = [num for num in unique_numbers if num not in subset]
-    
-    # Ensure a valid partition exists 
-    return 1 if sum(subset) == sum(complement) == target_sum else 0
+    return valid_partitions if valid_partitions > 0 else 0
