@@ -31,30 +31,15 @@ def patience_sort(arr: List[T], key: Callable[[T], Any] = None) -> List[T]:
     if len(arr) <= 1:
         return arr.copy()
     
-    # Create a comparison function
-    def compare(a: T, b: T) -> int:
-        # If key function is provided, use it for comparison
-        if key:
-            a_key = key(a)
-            b_key = key(b)
-            return (a_key > b_key) - (a_key < b_key)
-        
-        # Try standard comparison methods
-        try:
-            return (a > b) - (a < b)
-        except TypeError:
-            # Fallback to string representation comparison
-            return (str(a) > str(b)) - (str(a) < str(b))
-    
     # Create piles (each pile is a sorted sublist)
     piles = []
     
     for item in arr:
-        # Find the rightmost pile where we can place the item
+        # Determine which pile to place the item in
         suitable_pile = None
         for pile in piles:
             # If pile is empty or item is less/equal to top of pile
-            if not pile or compare(item, pile[-1]) <= 0:
+            if not pile or key_compare(item, pile[-1], key) <= 0:
                 suitable_pile = pile
                 break
         
@@ -68,21 +53,55 @@ def patience_sort(arr: List[T], key: Callable[[T], Any] = None) -> List[T]:
     
     # Merge piles
     result = []
-    heap = [(pile[-1], i) for i, pile in enumerate(piles)]
+    heap = []
     
-    # Use Python's heapq for efficient min-heap operations
+    # Add last items from each pile to heap
+    for i, pile in enumerate(piles):
+        if pile:
+            heap.append((pile[-1], i, 1))
+    
     import heapq
-    heapq.heapify(heap)
+    # Heapify requires a custom comparison to handle complex types with key
+    def heap_compare(a, b):
+        return key_compare(a[0], b[0], key)
+    
+    heap.sort(key=cmp_to_key(heap_compare))
     
     while heap:
-        val, pile_index = heapq.heappop(heap)
+        val, pile_index, pile_length = heap[0]
         result.append(val)
+        heap.pop(0)
         
-        # Remove the top element from its pile
-        piles[pile_index].pop()
-        
-        # If pile is not empty, add its new top to the heap
-        if piles[pile_index]:
-            heapq.heappush(heap, (piles[pile_index][-1], pile_index))
+        # If more items in the pile, add the next one
+        remaining_pile = piles[pile_index][:-pile_length]
+        if remaining_pile:
+            new_item = remaining_pile[-1]
+            heap.append((new_item, pile_index, 1))
+            heap.sort(key=cmp_to_key(heap_compare))
     
     return result
+
+def key_compare(a: T, b: T, key: Callable[[T], Any] = None) -> int:
+    """
+    Compare two elements using an optional key function.
+    
+    Args:
+        a (T): First element to compare
+        b (T): Second element to compare
+        key (Optional[Callable[[T], Any]]): Optional key function
+    
+    Returns:
+        int: Negative if a < b, 0 if a == b, positive if a > b
+    """
+    # If key function is provided, use it for comparison
+    if key:
+        a_val = key(a)
+        b_val = key(b)
+        return (a_val > b_val) - (a_val < b_val)
+    
+    # Try standard comparison methods
+    try:
+        return (a > b) - (a < b)
+    except TypeError:
+        # Fallback to string representation comparison
+        return (str(a) > str(b)) - (str(a) < str(b))
