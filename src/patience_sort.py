@@ -1,7 +1,6 @@
 from typing import List, TypeVar, Any
-from collections.abc import Comparable
 
-T = TypeVar('T', bound=Comparable)
+T = TypeVar('T')
 
 def patience_sort(arr: List[T]) -> List[T]:
     """
@@ -21,7 +20,7 @@ def patience_sort(arr: List[T]) -> List[T]:
     
     Raises:
         TypeError: If the input is not a list
-        ValueError: If elements cannot be compared
+        TypeError: If list elements cannot be compared
     """
     # Validate input
     if not isinstance(arr, list):
@@ -39,7 +38,7 @@ def patience_sort(arr: List[T]) -> List[T]:
         suitable_pile = None
         for pile in piles:
             # If pile is empty or item is less than/equal to top of pile
-            if not pile or item <= pile[-1]:
+            if not pile or try_less_than_or_equal(item, pile[-1]):
                 suitable_pile = pile
                 break
         
@@ -71,3 +70,22 @@ def patience_sort(arr: List[T]) -> List[T]:
             heapq.heappush(heap, (piles[pile_index][-1], pile_index))
     
     return result
+
+def try_less_than_or_equal(a: T, b: T) -> bool:
+    """
+    Try to compare two elements safely, raising TypeError if not comparable.
+    
+    Args:
+        a (T): First element to compare
+        b (T): Second element to compare
+    
+    Returns:
+        bool: True if a <= b, False otherwise
+    
+    Raises:
+        TypeError: If elements cannot be compared
+    """
+    try:
+        return a <= b
+    except TypeError:
+        raise TypeError(f"Cannot compare {type(a)} and {type(b)}")
