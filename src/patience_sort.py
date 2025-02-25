@@ -1,4 +1,5 @@
-from typing import List, TypeVar, Comparable
+from typing import List, TypeVar, Any
+from collections.abc import Comparable
 
 T = TypeVar('T', bound=Comparable)
 
