@@ -1,8 +1,9 @@
-from typing import List, TypeVar, Any
+from typing import List, TypeVar, Any, Callable
+from functools import cmp_to_key
 
 T = TypeVar('T')
 
-def patience_sort(arr: List[T]) -> List[T]:
+def patience_sort(arr: List[T], key: Callable[[T], Any] = None) -> List[T]:
     """
     Implement the Patience Sorting algorithm.
     
@@ -14,13 +15,13 @@ def patience_sort(arr: List[T]) -> List[T]:
     
     Args:
         arr (List[T]): The input list to be sorted
+        key (Optional[Callable[[T], Any]]): Optional key function for custom sorting
     
     Returns:
         List[T]: A new sorted list
     
     Raises:
         TypeError: If the input is not a list
-        TypeError: If list elements cannot be compared
     """
     # Validate input
     if not isinstance(arr, list):
@@ -30,6 +31,21 @@ def patience_sort(arr: List[T]) -> List[T]:
     if len(arr) <= 1:
         return arr.copy()
     
+    # Create a comparison function
+    def compare(a: T, b: T) -> int:
+        # If key function is provided, use it for comparison
+        if key:
+            a_key = key(a)
+            b_key = key(b)
+            return (a_key > b_key) - (a_key < b_key)
+        
+        # Try standard comparison methods
+        try:
+            return (a > b) - (a < b)
+        except TypeError:
+            # Fallback to string representation comparison
+            return (str(a) > str(b)) - (str(a) < str(b))
+    
     # Create piles (each pile is a sorted sublist)
     piles = []
     
@@ -37,8 +53,8 @@ def patience_sort(arr: List[T]) -> List[T]:
         # Find the rightmost pile where we can place the item
         suitable_pile = None
         for pile in piles:
-            # If pile is empty or item is less than/equal to top of pile
-            if not pile or try_less_than_or_equal(item, pile[-1]):
+            # If pile is empty or item is less/equal to top of pile
+            if not pile or compare(item, pile[-1]) <= 0:
                 suitable_pile = pile
                 break
         
@@ -70,22 +86,3 @@ def patience_sort(arr: List[T]) -> List[T]:
             heapq.heappush(heap, (piles[pile_index][-1], pile_index))
     
     return result
-
-def try_less_than_or_equal(a: T, b: T) -> bool:
-    """
-    Try to compare two elements safely, raising TypeError if not comparable.
-    
-    Args:
-        a (T): First element to compare
-        b (T): Second element to compare
-    
-    Returns:
-        bool: True if a <= b, False otherwise
-    
-    Raises:
-        TypeError: If elements cannot be compared
-    """
-    try:
-        return a <= b
-    except TypeError:
-        raise TypeError(f"Cannot compare {type(a)} and {type(b)}")
