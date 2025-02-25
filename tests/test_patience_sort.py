@@ -42,11 +42,8 @@ def test_patience_sort_with_mixed_types():
         def __init__(self, value):
             self.value = value
         
-        def __lt__(self, other):
-            return self.value < other.value
-        
-        def __eq__(self, other):
-            return self.value == other.value
+        def __repr__(self):
+            return f"ComparableClass({self.value})"
     
     arr = [
         ComparableClass(3), 
@@ -55,7 +52,7 @@ def test_patience_sort_with_mixed_types():
         ComparableClass(1)
     ]
     sorted_arr = sorted(arr, key=lambda x: x.value)
-    result = patience_sort(arr)
+    result = patience_sort(arr, key=lambda x: x.value)
     
     assert len(result) == len(sorted_arr)
     assert all(x.value == y.value for x, y in zip(result, sorted_arr))
