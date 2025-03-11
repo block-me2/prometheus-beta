@@ -17,8 +17,10 @@ def log_error(message: str) -> None:
     if not isinstance(message, str):
         raise TypeError("Error message must be a string")
     
-    if not message.strip():
+    # Strip whitespace and check for empty string
+    stripped_message = message.strip()
+    if not stripped_message:
         raise ValueError("Error message cannot be empty")
     
     # Log the error message to console
-    print(f"ERROR: {message}")
+    print(f"ERROR: {stripped_message}")
