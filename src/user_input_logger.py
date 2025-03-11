@@ -20,7 +20,16 @@ def log_user_input(log_file: Optional[str] = None) -> str:
     # Clear any existing loggers
     logging.getLogger().handlers.clear()
     
-    # Configure logging
+    # Get root logger
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+
+    # Create console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(logging.Formatter('%(asctime)s - User Input: %(message)s'))
+    logger.addHandler(console_handler)
+
+    # Handle file logging if log_file is provided
     if log_file:
         # Ensure log file directory exists
         os.makedirs(os.path.dirname(os.path.abspath(log_file)), exist_ok=True)
@@ -28,17 +37,7 @@ def log_user_input(log_file: Optional[str] = None) -> str:
         # Create file handler
         file_handler = logging.FileHandler(log_file)
         file_handler.setFormatter(logging.Formatter('%(asctime)s - User Input: %(message)s'))
-        
-        # Get root logger and add handler
-        logger = logging.getLogger()
-        logger.setLevel(logging.INFO)
         logger.addHandler(file_handler)
-    else:
-        # Configure console logging
-        logging.basicConfig(
-            level=logging.INFO, 
-            format='%(asctime)s - User Input: %(message)s'
-        )
 
     # Prompt and read user input
     try:
@@ -49,9 +48,9 @@ def log_user_input(log_file: Optional[str] = None) -> str:
             raise ValueError("Input cannot be empty")
         
         # Log the input
-        logging.info(user_input)
+        logger.info(user_input)
         
         return user_input
     except Exception as e:
-        logging.error(f"Error logging input: {e}")
+        logger.error(f"Error logging input: {e}")
         raise
