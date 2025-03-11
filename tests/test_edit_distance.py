@@ -26,7 +26,7 @@ def test_unicode_strings():
 
 def test_long_strings():
     """Test edit distance with longer strings"""
-    assert edit_distance('algorithm', 'logarithm') == 2
+    assert edit_distance('algorithm', 'logarithm') == 3
 
 def test_none_input():
     """Test that None input raises a ValueError"""
