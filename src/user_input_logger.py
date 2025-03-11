@@ -17,17 +17,22 @@ def log_user_input(log_file: Optional[str] = None) -> str:
     Raises:
         ValueError: If input is empty or contains only whitespace.
     """
-    # Ensure log file directory exists if log_file is specified
+    # Clear any existing loggers
+    logging.getLogger().handlers.clear()
+    
+    # Configure logging
     if log_file:
-        # Create directory if it doesn't exist
+        # Ensure log file directory exists
         os.makedirs(os.path.dirname(os.path.abspath(log_file)), exist_ok=True)
         
-        # Configure file logging
-        logging.basicConfig(
-            filename=log_file, 
-            level=logging.INFO, 
-            format='%(asctime)s - User Input: %(message)s'
-        )
+        # Create file handler
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setFormatter(logging.Formatter('%(asctime)s - User Input: %(message)s'))
+        
+        # Get root logger and add handler
+        logger = logging.getLogger()
+        logger.setLevel(logging.INFO)
+        logger.addHandler(file_handler)
     else:
         # Configure console logging
         logging.basicConfig(
