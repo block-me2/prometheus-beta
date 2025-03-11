@@ -33,18 +33,30 @@ def test_invalid_file_path():
         change_file_permissions("/path/to/nonexistent/file", 0o644)
 
 def test_invalid_permission_type():
-    with pytest.raises(TypeError):
-        change_file_permissions("some_file.txt", "not an int")
+    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+        temp_path = temp_file.name
     
-    with pytest.raises(TypeError):
-        change_file_permissions(123, 0o644)
+    try:
+        with pytest.raises(TypeError):
+            change_file_permissions(temp_path, "not an int")
+        
+        with pytest.raises(TypeError):
+            change_file_permissions(123, 0o644)
+    finally:
+        os.unlink(temp_path)
 
 def test_invalid_permission_value():
-    with pytest.raises(ValueError):
-        change_file_permissions("some_file.txt", -1)
+    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+        temp_path = temp_file.name
     
-    with pytest.raises(ValueError):
-        change_file_permissions("some_file.txt", 0o1000)
+    try:
+        with pytest.raises(ValueError):
+            change_file_permissions(temp_path, -1)
+        
+        with pytest.raises(ValueError):
+            change_file_permissions(temp_path, 0o1000)
+    finally:
+        os.unlink(temp_path)
 
 def test_permission_change_return_value():
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
