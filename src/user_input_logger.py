@@ -1,5 +1,6 @@
 import sys
 import logging
+import os
 from typing import Optional
 
 def log_user_input(log_file: Optional[str] = None) -> str:
@@ -16,14 +17,19 @@ def log_user_input(log_file: Optional[str] = None) -> str:
     Raises:
         ValueError: If input is empty or contains only whitespace.
     """
-    # Configure logging
+    # Ensure log file directory exists if log_file is specified
     if log_file:
+        # Create directory if it doesn't exist
+        os.makedirs(os.path.dirname(os.path.abspath(log_file)), exist_ok=True)
+        
+        # Configure file logging
         logging.basicConfig(
             filename=log_file, 
             level=logging.INFO, 
             format='%(asctime)s - User Input: %(message)s'
         )
     else:
+        # Configure console logging
         logging.basicConfig(
             level=logging.INFO, 
             format='%(asctime)s - User Input: %(message)s'
