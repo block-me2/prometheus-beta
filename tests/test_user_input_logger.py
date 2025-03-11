@@ -25,6 +25,9 @@ def test_log_user_input_file(monkeypatch, tmp_path):
     # Create a temporary log file
     log_file = tmp_path / "test_log.txt"
     
+    # Ensure the file can be created
+    open(log_file, 'w').close()
+    
     # Simulate user input
     monkeypatch.setattr('builtins.input', lambda _: "File logging test")
     
