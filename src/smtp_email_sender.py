@@ -1,4 +1,5 @@
 import smtplib
+import re
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from typing import Optional, List, Union
@@ -47,11 +48,15 @@ def send_email(
     cc_list = [cc] if isinstance(cc, str) else (cc or [])
     bcc_list = [bcc] if isinstance(bcc, str) else (bcc or [])
     
-    # Validate email addresses (basic check)
-    def validate_email(email):
-        return '@' in email and '.' in email.split('@')[1]
+    # Validate email addresses (more robust regex check)
+    email_regex = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
     
-    if not all(validate_email(r) for r in recipients + cc_list + bcc_list):
+    def validate_email(email):
+        return email_regex.match(email) is not None
+    
+    # Check email format for all email addresses
+    all_emails = recipients + cc_list + bcc_list + [sender_email]
+    if not all(validate_email(e) for e in all_emails):
         raise ValueError("Invalid email address format")
 
     try:
