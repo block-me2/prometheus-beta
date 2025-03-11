@@ -5,20 +5,20 @@ import sys
 from io import StringIO
 from src.user_input_logger import log_user_input
 
-def test_log_user_input_console(monkeypatch, caplog):
+def test_log_user_input_console(monkeypatch, capfd):
     """Test logging user input to console"""
     # Simulate user input
     monkeypatch.setattr('builtins.input', lambda _: "Test input")
     
-    # Capture logging
-    caplog.set_level(logging.INFO)
-    
     # Call the function
     result = log_user_input()
     
+    # Capture output
+    captured = capfd.readouterr()
+    
     # Assertions
     assert result == "Test input"
-    assert "Test input" in caplog.text
+    assert "Test input" in captured.err
 
 def test_log_user_input_file(monkeypatch, tmp_path):
     """Test logging user input to a file"""
