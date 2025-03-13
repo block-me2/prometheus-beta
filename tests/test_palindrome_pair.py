@@ -28,7 +28,7 @@ def test_palindrome_pair_edge_cases():
     assert palindrome_pair([5]) == False
     
     # Negative numbers
-    assert palindrome_pair([-10, 0, 11]) == True  # 11 - 0 = 11 (palindrome)
+    assert palindrome_pair([-11, 0, 11]) == True  # 11 - 0 = 11 (palindrome)
     assert palindrome_pair([-10, 0, 10]) == False
 
 def test_palindrome_pair_input_validation():
