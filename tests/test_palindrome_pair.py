@@ -11,8 +11,8 @@ def test_is_palindrome():
 def test_palindrome_pair_basic_cases():
     """Test basic scenarios for palindrome_pair."""
     # Palindrome difference exists
-    assert palindrome_pair([10, 20, 30, 40]) == True  # 30 - 10 = 20 (palindrome)
-    assert palindrome_pair([5, 15, 25, 35]) == True  # 35 - 15 = 20 (palindrome)
+    assert palindrome_pair([10, 20, 30, 40]) == False  # No palindrome difference
+    assert palindrome_pair([10, 11, 22, 33]) == True  # 33 - 22 = 11 (palindrome)
     
     # No palindrome difference
     assert palindrome_pair([1, 2, 3, 4]) == False
@@ -27,7 +27,8 @@ def test_palindrome_pair_edge_cases():
     assert palindrome_pair([5]) == False
     
     # Negative numbers
-    assert palindrome_pair([-10, 0, 10]) == True  # 10 - 0 = 10 (palindrome)
+    assert palindrome_pair([-10, 0, 11]) == True  # 11 - 0 = 11 (palindrome)
+    assert palindrome_pair([-10, 0, 10]) == False
 
 def test_palindrome_pair_input_validation():
     """Test input validation for palindrome_pair."""
