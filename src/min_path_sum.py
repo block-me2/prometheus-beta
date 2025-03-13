@@ -41,9 +41,13 @@ def min_path_sum(root):
     if root.left is None and root.right is None:
         return root.val
     
-    # Recursively get min path sums of left and right subtrees
-    left_min = min_path_sum(root.left) if root.left else float('inf')
-    right_min = min_path_sum(root.right) if root.right else float('inf')
+    # If only left child exists
+    if root.left and root.right is None:
+        return root.val + min_path_sum(root.left)
     
-    # Return the minimum of left and right path sums plus current node's value
-    return root.val + min(left_min, right_min)
+    # If only right child exists
+    if root.right and root.left is None:
+        return root.val + min_path_sum(root.right)
+    
+    # If both children exist, choose the minimum
+    return root.val + min(min_path_sum(root.left), min_path_sum(root.right))
