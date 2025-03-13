@@ -17,6 +17,7 @@ def test_palindrome_pair_basic_cases():
     # No palindrome difference
     assert palindrome_pair([1, 2, 3, 4]) == False
     assert palindrome_pair([11, 22, 33, 44]) == False
+    assert palindrome_pair([10, 20, 30, 121]) == False
 
 def test_palindrome_pair_edge_cases():
     """Test edge cases for palindrome_pair."""
