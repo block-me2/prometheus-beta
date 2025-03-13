@@ -72,8 +72,17 @@ class MazeSolver:
                     maze[next_r][next_c] != '1' and 
                     (next_r, next_c) not in visited):
                     
-                    queue.append(((next_r, next_c), path + [(next_r, next_c)]))
-                    visited.add((next_r, next_c))
+                    # Additional check to prevent getting stuck
+                    neighbors_count = sum(
+                        1 for ndr, ndc in directions 
+                        if (0 <= next_r + ndr < rows and 
+                            0 <= next_c + ndc < cols and 
+                            maze[next_r + ndr][next_c + ndc] != '1')
+                    )
+                    
+                    if neighbors_count > 0:  # Ensure at least one valid adjacent cell
+                        queue.append(((next_r, next_c), path + [(next_r, next_c)]))
+                        visited.add((next_r, next_c))
         
         # No path found
         return None
