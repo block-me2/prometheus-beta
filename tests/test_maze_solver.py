@@ -17,14 +17,15 @@ def test_simple_maze_path():
 def test_maze_with_obstacles():
     """Test a maze with multiple obstacles and one valid path"""
     maze = [
-        ['S', '0', '1', '0'],
-        ['1', '0', '1', '0'],
-        ['0', '0', '1', 'E']
+        ['S', '0', '1', '0', '0'],
+        ['1', '0', '1', '0', '0'],
+        ['0', '0', '0', '0', '1'],
+        ['0', '1', '1', '0', 'E']
     ]
     path = MazeSolver.find_shortest_path(maze)
     assert path is not None
     assert path[0] == (0, 0)  # Start point
-    assert path[-1] == (2, 3)  # End point
+    assert path[-1] == (3, 4)  # End point
 
 def test_no_path_exists():
     """Test a maze where no path exists"""
